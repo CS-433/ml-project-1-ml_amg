@@ -3,12 +3,26 @@ from helper import *
 
 ### Linear regression using gradient descent
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
-    w, loss = None
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute gradient and loss
+        grad, loss = compute_gradient_and_loss(y, tx, w)
+        # update w by gradient
+        w = w - gamma * grad
     return w, loss
 
 ### Linear regression using stochastic gradient descent
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
-    w, loss = None
+    # implement stochastic gradient descent.
+    w = initial_w
+    batch_size = 1
+    for n_iter in range(max_iters):
+        for batch_y, batch_tx in batch_iter(y, tx, batch_size):
+            # compute gradient and loss
+            grad, loss = compute_gradient_and_loss(batch_y, batch_tx, w)
+            # update w by gradient
+            w = w - gamma * grad
+
     return w, loss
 
 
