@@ -5,10 +5,14 @@ from helper import *
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     w = initial_w
     for n_iter in range(max_iters):
+        epoch_losses = []
         # compute gradient and loss
         grad, loss = compute_gradient_and_loss(y, tx, w)
         # update w by gradient
         w = w - gamma * grad
+        epoch_losses.append(loss)
+        print("Epoch ({bi}/{ti}): loss={l}".format(bi=n_iter+1, ti=max_iters, l=np.mean(epoch_losses)))
+
     return w, loss
 
 ### Linear regression using stochastic gradient descent
@@ -16,12 +20,15 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     # implement stochastic gradient descent.
     w = initial_w
     batch_size = 1
+    epoch_losses = []
     for n_iter in range(max_iters):
         for batch_y, batch_tx in batch_iter(y, tx, batch_size):
             # compute gradient and loss
             grad, loss = compute_gradient_and_loss(batch_y, batch_tx, w)
             # update w by gradient
             w = w - gamma * grad
+            epoch_losses.append(loss)
+        print("Epoch ({bi}/{ti}): loss={l}".format(bi=n_iter+1, ti=max_iters, l=np.mean(epoch_losses)))
 
     return w, loss
 
@@ -43,6 +50,7 @@ def ridge_regression(y, tx, lambda_):
 
 ### Logistic regression using gradient descent or SGD
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
+
     w, loss = None
     return w, loss
 

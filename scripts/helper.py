@@ -27,9 +27,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 def compute_loss(y, tx, w):
-    '''
-    compute the loss by MSE
-    '''
+    '''compute the loss by MSE'''
     e = y - tx.dot(w)
     mse = e.dot(e) / (2 * len(tx))
     return mse

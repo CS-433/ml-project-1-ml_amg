@@ -30,7 +30,7 @@ print('data loading and splitting finish')
 # Define the parameters of the algorithm.
 epoch_num = 200
 gamma = 0.001
-lamda = 0.1
+_lambda = 0.1
 batch_size = 100
 
 # Initialization
@@ -38,11 +38,11 @@ w_initial = np.zeros((x_train.shape[1]))
 
 # Start training.
 start_time = datetime.datetime.now()
-model = 'SGD' # TODO: CHANGE THE MODEL NAME
-loss, ws = train(model, y_train, x_train, w_initial, batch_size, epoch_num, lamda, gamma)
+model = 'least squares SGD' # TODO: CHANGE THE MODEL NAME
+loss, ws = train(model, y_train, x_train, w_initial, batch_size, epoch_num, _lambda, gamma)
 end_time = datetime.datetime.now()
 exection_time = (end_time - start_time).total_seconds()
-print("training time={t:.3f} seconds".format(t=exection_time))
+print("Model {m}:training time={t:.3f} seconds".format(m=model, t=exection_time))
 
 # Start evaluation
 accuracy_eval = evaluation(ws, x_eval, y_eval)
