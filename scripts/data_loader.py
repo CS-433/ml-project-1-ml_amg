@@ -61,55 +61,63 @@ def load_data(data_path):
 
 
 def clean_data(data):
-    # TODO: clean the data
-
-    return None
-
-
-def pre_processing(data):
-    # TODO: feature engineering
-
-    return None
+    # Replace -999 with mean value
+    for i in range(data.shape[1]):
+        data[data[:, i] == -999, i] = np.mean(data[data[:, i] > -999, i])
+    return data
 
 
-def standardize(x):
+def feature_cleaning(data):
+    # get rid of useless features
+    chosen_feature = np.ones(30)
+    black_list = [14,15,17,18,20,25,28]
+    chosen_feature[black_list] = 0
+    data = data[:,np.bool_(chosen_feature)]
+    return data
+
+def poly_feature_aug(data):
+    # Genetate quadratic polynomial feature
+    new_feature = np.reshape(np.tile(np.expand_dims(data, axis=2), (1, 1, data.shape[1])) *
+                             np.tile(np.expand_dims(data, axis=1), (1, data.shape[1], 1)),
+                             (data.shape[0], data.shape[1] ** 2))
+    return new_feature
+
+
+def standardize(x, nonlinear_trasform = True):
     """Standardize the original data set."""
-    mean_x = np.mean(x)
+    mean_x = np.mean(x, axis=0)
     x = x - mean_x
-    std_x = np.std(x)
-    x = x / std_x
-    return x, mean_x, std_x
+    if nonlinear_trasform == True:
+        std_x = np.std(x, axis=0)
+        x = np.sign(x) * (std_x * np.log(np.abs(x/std_x)+1))
+    std_x_new = np.std(x, axis=0)
+    x = x / std_x_new
+    return x
 
 
-def normalization(train, test, concatenate=False):
+def normalization(data, new_feature = None):
     '''
         normalization function.
-        train: list, train set
-        test: list, test set
-        concatenate: bool, do normalization on train and test set together or not.
+        data: initial data
+        new_feature: polynomial feature
     '''
 
-    if concatenate:
-        ### normalize train and test set together
-        train_test_data = np.concatenate((train, test), axis=0)
-        train_test_data, _, _ = standardize(train_test_data)
-        train_test_data = np.c_[np.ones(train_test_data.shape[0]), train_test_data]
-        train, test = train_test_data[:train.shape[0], :], train_test_data[train.shape[0]:, :]
-
+    if new_feature is None:
+        data = np.concatenate((np.ones((data.shape[0],1)), standardize(data, nonlinear_trasform = True)), axis=1)
     else:
-        train, _, _ = standardize(train)
-        test, _, _  = standardize(test)
-        train = np.c_[np.ones(train.shape[0]), train]
-        test = np.c_[np.ones(test.shape[0]), test]
-
-    return train, test
+        data = np.concatenate((np.ones((data.shape[0], 1)), standardize(data, nonlinear_trasform = True), standardize(new_feature, nonlinear_trasform = True)), axis=1)
+    return data
 
 
-def train_val_split(ids, y, input, split_fraction=0.8):
+def data_split(ids, y, input, split_fraction=0.8):
+
+    labeled_data_num = len(ids)
+    #test split
+    test_data = input[labeled_data_num:]
 
     ### train/val split
-    split_number = int(ids.shape[0] * split_fraction)
+    split_number = int(labeled_data_num * split_fraction)
     train_id, train_label, train_data = ids[:split_number], y[:split_number], input[:split_number]
-    eval_id, eval_label, eval_data = ids[split_number:], y[split_number:], input[split_number:]
+    eval_id, eval_label, eval_data = ids[split_number:], y[split_number:], input[split_number:labeled_data_num]
 
-    return (train_id, train_label, train_data), (eval_id, eval_label, eval_data)
+    return (train_id, train_label, train_data), (eval_id, eval_label, eval_data), (test_data)
