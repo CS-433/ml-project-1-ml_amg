@@ -58,13 +58,6 @@ def compute_loss(y, tx, w):
     mse = e.dot(e) / (2 * len(tx))
     return mse
 
-def compute_rmse_loss(y, tx, w):
-    '''compute the loss by RMSE'''
-    e = y - tx.dot(w)
-    rmse = e.dot(e) / (2 * len(tx))
-    return rmse
-
-
 def compute_gradient_and_loss(y, tx, w):
     """Compute the gradient and loss"""
     e = y - tx.dot(w)

@@ -33,7 +33,7 @@ def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, ga
 
 def evaluation(ws, x_eval, y_eval):
 
-    if len(ws.shape)==1:
+    if len(np.array(ws).shape)==1:
         ws = np.array(ws)
         pred_eval = np.round(sigmoid(x_eval.dot(ws.T)))
         accuracy_eval = np.mean(pred_eval == y_eval) * 100
@@ -43,3 +43,12 @@ def evaluation(ws, x_eval, y_eval):
         accuracy_eval = np.mean(pred_eval == np.tile(y_eval, (pred_eval.shape[1],1)).T, axis=0) * 100
 
     return accuracy_eval
+
+
+# Calculate accuracy percentage
+def accuracy_metric(actual, predicted):
+    correct = 0
+    for i in range(len(actual)):
+        if actual[i] == predicted[i]:
+            correct += 1
+    return correct / float(len(actual)) * 100.0

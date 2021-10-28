@@ -45,7 +45,7 @@ def ridge_regression(y, tx, lambda_):
     n = tx.shape[0]
     lambda_prime = 2 * n * lambda_
     w = np.linalg.inv(tx.transpose().dot(tx) + lambda_prime.dot(I)).dot(tx.transpose().dot(y))
-    loss = compute_rmse_loss(y, tx, w)
+    loss = compute_loss(y, tx, w)
     return w, loss
 
 
@@ -77,7 +77,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         ws.append(w)
         print("Gradient Descent({bi}/{ti}): loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
 
-    return w, loss
+    return ws, losses
 
 def reg_logistic_regression_with_tricks(y, tx, lambda_, initial_w, batch_size, epoch_num, initial_gamma, final_gamma, gamma_decay):
     ws = [initial_w]

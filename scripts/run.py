@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from implementations import *
-# from helper import *
+
 import data_loader
 import datetime
 from core import *
@@ -39,29 +39,23 @@ batch_size = 2
 # set the regularization term for initial feature as 0.1, and polynomial feature as 0.2
 _lambda1 = 0.05
 _lambda2 = 0.1
-_lambda = np.concatenate((np.ones(24)*_lambda1,np.ones(529)*_lambda2))
-# _lambda = 0.1
+# _lambda = np.concatenate((np.ones(24)*_lambda1,np.ones(529)*_lambda2))
+_lambda = 0.1
 
 
 # Initialization
 w_initial = np.zeros((x_train.shape[1]))
 
 model_list = [
-    'least squares',
-    'least squares GD',
-    'least squares SGD',
-    'ridge regression',
     'logistic regression',
     'reg logistic regression',
     'reg logistic regression with tricks',
-
 ]
 
-for model in model_list:
+for model in model_list[3:]:
 
     # Start training.
     start_time = datetime.datetime.now()
-    # model = 'least squares' # TODO: CHANGE THE MODEL NAME
     ws, losses = train(model, y_train, x_train, w_initial, batch_size, epoch_num, _lambda, initial_gamma, final_gamma, gamma_decay)
     end_time = datetime.datetime.now()
     exection_time = (end_time - start_time).total_seconds()
@@ -75,8 +69,8 @@ for model in model_list:
     ## TODO: visualization
 
 
-    # # Start test
-    pred_test = np.round(sigmoid(x_test.dot(np.array(ws)[np.argmax(accuracy_eval),:])))
-    pred_test[pred_test == 0] = -1
-    submit_path = data_file + "/submission_newcode_weight.csv"
-    data_loader.create_csv_submission(id_test, pred_test, submit_path)
+# # # Start test
+# pred_test = np.round(sigmoid(x_test.dot(np.array(ws)[np.argmax(accuracy_eval),:])))
+# pred_test[pred_test == 0] = -1
+# submit_path = data_file + f"/submission_{model}.csv"
+# data_loader.create_csv_submission(id_test, pred_test, submit_path)
