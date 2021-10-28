@@ -77,7 +77,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         ws.append(w)
         print("Gradient Descent({bi}/{ti}): loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
 
-    return ws, losses
+    return w, loss
 
 def reg_logistic_regression_with_tricks(y, tx, lambda_, initial_w, batch_size, epoch_num, initial_gamma, final_gamma, gamma_decay):
     ws = [initial_w]

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from implementations import *
 
-import data_loader
+import data_processing
 import datetime
 from core import *
 
@@ -13,22 +13,24 @@ train_path = data_file + "/train.csv"
 test_path = data_file + "/test.csv"
 
 ### load the train / test data
-all_id_train, all_y_train, all_x_train = data_loader.load_data(train_path)
-id_test, y_test, x_test = data_loader.load_data(test_path)
+all_id_train, all_y_train, all_x_train = data_processing.load_data(train_path)
+id_test, y_test, x_test = data_processing.load_data(test_path)
 data = np.concatenate((all_x_train,x_test), axis=0)
 ### pre-processing
-data = data_loader.feature_cleaning(data)
-data = data_loader.clean_data(data)
+data = data_processing.feature_cleaning(data)
+data = data_processing.clean_data(data)
 # new_feature = data_loader.poly_feature_aug(data)
 
 ### normalization on the input data (train/test)
-data = data_loader.normalization(data)
+data = data_processing.normalization(data)
 
-### train/val split
-split_fraction = 0.8
-(id_train, y_train, x_train), (id_eval, y_eval, x_eval), (x_test) = \
-    data_loader.data_split(all_id_train, all_y_train, data, split_fraction=split_fraction)
-print('data loading and splitting finish')
+# ### train/test split
+all_x_train, x_test = data[:len(all_id_train)], data[:len(all_id_train)]
+
+# split_fraction = 0.8
+# (id_train, y_train, x_train), (id_eval, y_eval, x_eval), (x_test) = \
+#     data_processing.data_split(all_id_train, all_y_train, data, split_fraction=split_fraction)
+# print('data loading and splitting finish')
 
 # Define the parameters of the algorithm.
 epoch_num = 20
@@ -43,8 +45,6 @@ _lambda2 = 0.1
 _lambda = 0.1
 
 
-# Initialization
-w_initial = np.zeros((x_train.shape[1]))
 
 model_list = [
     'logistic regression',
@@ -52,22 +52,39 @@ model_list = [
     'reg logistic regression with tricks',
 ]
 
-for model in model_list[3:]:
+k_fold = 5
+print('all_x_train', len(all_x_train))
+val_inds, train_inds = data_processing.cross_validation_kfold(all_x_train, num_folds=5)
+print('val_id, train_id', val_inds, train_inds)
 
-    # Start training.
-    start_time = datetime.datetime.now()
-    ws, losses = train(model, y_train, x_train, w_initial, batch_size, epoch_num, _lambda, initial_gamma, final_gamma, gamma_decay)
-    end_time = datetime.datetime.now()
-    exection_time = (end_time - start_time).total_seconds()
-    print("Model {m}:training time={t:.3f} seconds".format(m=model, t=exection_time))
+for model in model_list[1:]:
 
-    # Start evaluation
-    accuracy_eval = evaluation(ws, x_eval, y_eval)
-    print("Best evaluation epoch: {idx} \nAccuracy: {acc}%". format(idx=np.argmax(accuracy_eval), acc=np.max(accuracy_eval)))
+    predictions = []
 
+    for val_ind, train_ind in zip(val_inds, train_inds):
 
-    ## TODO: visualization
+        x_val, y_val = np.array(all_x_train)[np.array(val_ind)], np.array(all_y_train)[np.array(val_inds)]
+        x_train, y_train = np.array(all_x_train)[np.array(train_ind)], np.array(all_y_train)[np.array(train_ind)]
 
+        # Initialization
+        w_initial = np.zeros((x_train.shape[1]))
+
+        # Start training.
+        start_time = datetime.datetime.now()
+        ws, losses = train(model, y_train, x_train, w_initial, batch_size, epoch_num, _lambda, initial_gamma, final_gamma, gamma_decay)
+        end_time = datetime.datetime.now()
+        exection_time = (end_time - start_time).total_seconds()
+        print("Model {m}:training time={t:.3f} seconds".format(m=model, t=exection_time))
+
+        # Start evaluation
+        accuracy_eval = evaluation(ws, x_val, y_val)
+        print("Best evaluation epoch: {idx} \nAccuracy: {acc}%". format(idx=np.argmax(accuracy_eval), acc=np.max(accuracy_eval)))
+
+        predictions.append(np.max(accuracy_eval))
+
+        ## TODO: visualization
+
+    print(f'{model} average accuracy:', np.mean(predictions))
 
 # # # Start test
 # pred_test = np.round(sigmoid(x_test.dot(np.array(ws)[np.argmax(accuracy_eval),:])))

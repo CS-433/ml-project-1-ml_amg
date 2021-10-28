@@ -121,3 +121,26 @@ def data_split(ids, y, input, split_fraction=0.8):
     eval_id, eval_label, eval_data = ids[split_number:], y[split_number:], input[split_number:labeled_data_num]
 
     return (train_id, train_label, train_data), (eval_id, eval_label, eval_data), (test_data)
+
+
+# split data into k folds
+def cross_validation_kfold(data, num_folds=5):
+    '''
+    K-fold cross-validation: divides all the samples in num_folds groups of samples
+    '''
+    train_id = []
+    test_id = []
+    data_index = np.arange(data.shape[0])
+
+    # size of each folder
+    fold_size = int(data.shape[0] / num_folds)
+
+    for i in range(num_folds):
+
+        test_fold = data_index[fold_size * i:fold_size * (i + 1)]
+        train_fold = np.delete(data_index, test_fold)
+
+        test_id.append(test_fold)
+        train_id.append(train_fold)
+
+    return test_id, train_id

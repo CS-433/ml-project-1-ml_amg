@@ -13,7 +13,7 @@ def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, ga
         w, loss = least_squares_GD(y_train, x_train, w_initial, max_iters, gamma)
 
     elif model == 'least squares SGD':
-        w, loss = least_squares_GD(y_train, x_train, w_initial, max_iters, gamma)
+        w, loss = least_squares_SGD(y_train, x_train, w_initial, max_iters, gamma)
 
     elif model == 'ridge regression':
         w, loss = ridge_regression(y_train, x_train, lambda_)
