@@ -94,3 +94,12 @@ def compute_improv_reg_logistic_loss_and_grad(y, X, w, lambda_):
     logi_loss = loss_term + regu_term
     grad = (X.T.dot(h_x - y) + lambda_ * w) / y.shape[0]
     return logi_loss, grad
+
+def find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num):
+    iter_num = 1
+    gamma = initial_gamma
+    while gamma > final_gamma:
+        gamma = gamma * gamma_decay
+        iter_num = iter_num +1
+    step_num = int(epoch_num / iter_num)
+    return step_num

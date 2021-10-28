@@ -6,6 +6,7 @@ import data_loader
 import datetime
 from core import *
 
+
 ### data path
 data_file = 'D:/Courses/Machine learning/Project1/data'
 train_path = data_file + "/train.csv"
@@ -32,6 +33,7 @@ print('data loading and splitting finish')
 # Define the parameters of the algorithm.
 epoch_num = 200
 initial_gamma = 0.1
+final_gamma = 0.001
 gamma_decay = 0.5
 batch_size = 200
 # set the regularization term for initial feature as 0.1, and polynomial feature as 0.2
@@ -40,13 +42,14 @@ _lambda2 = 0.1
 _lambda = np.concatenate((np.ones(24)*_lambda1,np.ones(529)*_lambda2))
 # _lambda = 0.1
 
+
 # Initialization
 w_initial = np.zeros((x_train.shape[1]))
 
 # Start training.
 start_time = datetime.datetime.now()
 model = 'reg logistic regression with tricks' # TODO: CHANGE THE MODEL NAME
-losses, ws = train(model, y_train, x_train, w_initial, batch_size, epoch_num, _lambda, initial_gamma, gamma_decay)
+losses, ws = train(model, y_train, x_train, w_initial, batch_size, epoch_num, _lambda, initial_gamma, final_gamma, gamma_decay)
 end_time = datetime.datetime.now()
 exection_time = (end_time - start_time).total_seconds()
 print("Model {m}:training time={t:.3f} seconds".format(m=model, t=exection_time))

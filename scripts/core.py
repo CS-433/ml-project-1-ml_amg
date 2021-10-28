@@ -4,7 +4,7 @@ from implementations import *
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
-def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, gamma, gamma_decay):
+def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, gamma, final_gamma, gamma_decay):
 
     if model == 'least squares':
         loss, ws = least_squares(y_train, x_train)
@@ -26,7 +26,7 @@ def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, ga
 
     elif model == 'reg logistic regression with tricks':
         loss, ws = reg_logistic_regression_with_tricks(y_train, x_train, lambda_, w_initial,
-                                                       batch_size, max_iters, gamma, gamma_decay)
+                                                       batch_size, max_iters, gamma, final_gamma, gamma_decay)
 
     return loss, ws
 
