@@ -9,8 +9,8 @@ from core import *
 
 ### data path
 data_file = '/Users/zhoumu/Documents/code/ml-project-1/data'
-train_path = data_file + "/train2.csv"
-test_path = data_file + "/test2.csv"
+train_path = data_file + "/train.csv"
+test_path = data_file + "/test.csv"
 
 ### load the train / test data
 all_id_train, all_y_train, all_x_train = data_loader.load_data(train_path)
@@ -18,11 +18,11 @@ id_test, y_test, x_test = data_loader.load_data(test_path)
 data = np.concatenate((all_x_train,x_test), axis=0)
 ### pre-processing
 data = data_loader.feature_cleaning(data)
-# data = data_loader.clean_data(data)
-new_feature = data_loader.poly_feature_aug(data)
+data = data_loader.clean_data(data)
+# new_feature = data_loader.poly_feature_aug(data)
 
 ### normalization on the input data (train/test)
-data = data_loader.normalization(data, new_feature)
+data = data_loader.normalization(data)
 
 ### train/val split
 split_fraction = 0.8

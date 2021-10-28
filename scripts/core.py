@@ -33,8 +33,13 @@ def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, ga
 
 def evaluation(ws, x_eval, y_eval):
 
-    ws = np.array(ws)
-    pred_eval = np.round(sigmoid(x_eval.dot(ws.T)))
-    accuracy_eval = np.mean(pred_eval == np.tile(y_eval, (pred_eval.shape[1],1)).T, axis=0) * 100
+    if len(ws.shape)==1:
+        ws = np.array(ws)
+        pred_eval = np.round(sigmoid(x_eval.dot(ws.T)))
+        accuracy_eval = np.mean(pred_eval == y_eval) * 100
+    else:
+        ws = np.array(ws)
+        pred_eval = np.round(sigmoid(x_eval.dot(ws.T)))
+        accuracy_eval = np.mean(pred_eval == np.tile(y_eval, (pred_eval.shape[1],1)).T, axis=0) * 100
 
     return accuracy_eval

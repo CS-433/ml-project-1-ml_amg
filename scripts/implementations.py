@@ -45,7 +45,7 @@ def ridge_regression(y, tx, lambda_):
     n = tx.shape[0]
     lambda_prime = 2 * n * lambda_
     w = np.linalg.inv(tx.transpose().dot(tx) + lambda_prime.dot(I)).dot(tx.transpose().dot(y))
-    loss = compute_loss(y, tx, w)
+    loss = compute_rmse_loss(y, tx, w)
     return w, loss
 
 
