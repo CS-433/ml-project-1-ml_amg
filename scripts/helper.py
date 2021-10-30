@@ -102,3 +102,12 @@ def find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num):
         iter_num = iter_num +1
     step_num = int(epoch_num / iter_num)
     return step_num
+
+
+# Calculate accuracy percentage
+def accuracy_metric(y_true, y_pred):
+    correct = 0
+    for i in range(len(y_true)):
+        if y_true[i] == y_pred[i]:
+            correct += 1
+    return correct / float(len(y_true)) * 100.0

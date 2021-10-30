@@ -87,9 +87,9 @@ class NeuralNetwork:
         return output_list[-1]
 
     # Calculate accuracy percentage
-    def accuracy_metric(self, actual, predicted):
+    def accuracy_metric(self, y_true, y_pred):
         correct = 0
-        for i in range(len(actual)):
-            if actual[i] == predicted[i]:
+        for i in range(len(y_true)):
+            if y_true[i] == y_pred[i]:
                 correct += 1
-        return correct / float(len(actual)) * 100.0
+        return correct / float(len(y_true)) * 100.0

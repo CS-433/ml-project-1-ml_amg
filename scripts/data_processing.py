@@ -70,7 +70,7 @@ def clean_data(data):
 def feature_cleaning(data):
     # get rid of useless features
     chosen_feature = np.ones(30)
-    black_list = [14,15,17,18,20,25,28]
+    black_list = [14, 15, 17, 18, 20, 25, 28]
     chosen_feature[black_list] = 0
     data = data[:,np.bool_(chosen_feature)]
     return data
