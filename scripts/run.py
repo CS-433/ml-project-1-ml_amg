@@ -61,7 +61,7 @@ for model in model_list:
 
     predictions = []
 
-    for val_ind, train_ind in zip(val_inds[:1], train_inds[:1]):
+    for val_ind, train_ind in zip(val_inds, train_inds):
 
         x_val, y_val = np.array(all_x_train)[np.array(val_ind)], np.array(all_y_train)[np.array(val_ind)]
         x_train, y_train = np.array(all_x_train)[np.array(train_ind)], np.array(all_y_train)[np.array(train_ind)]
