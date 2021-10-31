@@ -24,7 +24,7 @@ data = data_processing.clean_data(data)
 # new_feature = data_loader.poly_feature_aug(data)
 
 # ### train/test split
-all_x_train, x_test = data[:len(all_id_train)], data[:len(all_id_train)]
+all_x_train, x_test = data[:len(all_id_train)], data[len(all_id_train):]
 
 ### normalization on the input data (train/test)
 all_x_train = data_processing.normalization(all_x_train)
