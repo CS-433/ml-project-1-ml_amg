@@ -23,11 +23,13 @@ data = data_processing.feature_cleaning(data)
 data = data_processing.clean_data(data)
 # new_feature = data_loader.poly_feature_aug(data)
 
-### normalization on the input data (train/test)
-data = data_processing.normalization(data)
-
 # ### train/test split
 all_x_train, x_test = data[:len(all_id_train)], data[:len(all_id_train)]
+
+### normalization on the input data (train/test)
+all_x_train = data_processing.normalization(all_x_train)
+x_test = data_processing.normalization(x_test)
+
 
 # Define the parameters of the algorithm.
 epoch_num = 50
@@ -57,11 +59,13 @@ model_list = [
 k_fold = 5
 val_inds, train_inds = data_processing.cross_validation_kfold(all_x_train, num_folds=5)
 
+model_results = []
+
 for model in model_list:
 
     predictions = []
 
-    for val_ind, train_ind in zip(val_inds, train_inds):
+    for val_ind, train_ind in zip(val_inds[:1], train_inds[:1]):
 
         x_val, y_val = np.array(all_x_train)[np.array(val_ind)], np.array(all_y_train)[np.array(val_ind)]
         x_train, y_train = np.array(all_x_train)[np.array(train_ind)], np.array(all_y_train)[np.array(train_ind)]
@@ -113,7 +117,17 @@ for model in model_list:
 
         ## TODO: visualization
 
-    print(f'{model} -- average accuracy after cross validation:', np.mean(predictions))
+    results = {}
+    results['model'] = model
+    results['accuracy'] = np.mean(predictions)
+    results['epoch'] = epoch_num
+    results['loss'] = losses
+    print(f'{model} -- average accuracy after cross validation:', results['accuracy'])
+
+model_results.append(results)
+import json
+with open(f'{data_file}/model_results.json', 'w') as f:
+    json.dump(model_results, f)
 
 submit_path = data_file + f"/submission_{model}.csv"
 data_processing.create_csv_submission(id_test, pred_test, submit_path)

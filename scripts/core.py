@@ -1,8 +1,7 @@
 import numpy as np
 from implementations import *
-
-def sigmoid(x):
-    return 1/(1+np.exp(-x))
+from reg_logistic_regression_with_tricks import *
+from helper import *
 
 def train(model, y_train, x_train, w_initial, batch_size, max_iters, lambda_, gamma, final_gamma, gamma_decay):
 
@@ -43,12 +42,3 @@ def evaluation(ws, x_eval, y_eval):
         accuracy_eval = np.mean(pred_eval == np.tile(y_eval, (pred_eval.shape[1],1)).T, axis=0) * 100
 
     return accuracy_eval
-
-
-# Calculate accuracy percentage
-def accuracy_metric(actual, predicted):
-    correct = 0
-    for i in range(len(actual)):
-        if actual[i] == predicted[i]:
-            correct += 1
-    return correct / float(len(actual)) * 100.0
