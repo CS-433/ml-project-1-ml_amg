@@ -18,7 +18,7 @@ def relu_derivative(x):
 
 class NeuralNetwork:
 
-    def __init__(self, x, y, layer_size, lr=0.1, n_epochs=10, batch_size=1, learning_rate_decay=0.95):
+    def __init__(self, x, y, layer_size, lr=0.1, final_lr=0.001, n_epochs=10, batch_size=1, learning_rate_decay=0.95):
         self.input = x
         self.output = y
         self.lr = lr
@@ -27,6 +27,7 @@ class NeuralNetwork:
         self.layer_size = layer_size
         self.n_layers = len(self.layer_size)-1
         self.learning_rate_decay = learning_rate_decay
+        self.step_num = find_step_num(lr, final_lr, learning_rate_decay, n_epochs)
 
         self.weight = []
         self.bias = []
@@ -71,16 +72,19 @@ class NeuralNetwork:
         return error
 
     def train(self, x_train, y_train):
+        losses = []
         for epoch in range(self.n_epochs):
             error = 0
             for x, y in zip(x_train, y_train):
                 self.forward(x.reshape(1, len(x)))
                 error += self.back_propagation(y.reshape(1, len(y)))
-            if self.n_epochs % 10 == 0:
+            if epoch % self.step_num == 0:
                 # Decay learning rate
                 self.lr *= self.learning_rate_decay
             error /= len(x_train)
             print(f'epoch{epoch} - error:{error}')
+        losses.append(error)
+        return losses
 
     def predict(self, input):
         output_list = self.forward(input)

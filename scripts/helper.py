@@ -84,16 +84,6 @@ def compute_reg_logistic_loss_and_grad(y, X, w, lambda_):
     grad = (X.T.dot(h_x - y) + lambda_ * w) / y.shape[0]
     return logi_loss, grad
 
-def compute_improv_reg_logistic_loss_and_grad(y, X, w, lambda_):
-    """Calculate the loss."""
-    # lambda_ = np.concatenate((np.ones(24)*0.1,np.ones(529)*0.2))
-    h_x = sigmoid(X.dot(w))
-    loss_term = np.mean(-y * np.log(h_x) - (1 - y) * np.log(1 - h_x + 1e-6))
-    regu_term = np.sum(lambda_* (w ** 2)) / (2 * y.shape[0])
-    logi_loss = loss_term + regu_term
-    grad = (X.T.dot(h_x - y) + lambda_ * w) / y.shape[0]
-    return logi_loss, grad
-
 def find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num):
     iter_num = 1
     gamma = initial_gamma
@@ -102,3 +92,11 @@ def find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num):
         iter_num = iter_num +1
     step_num = int(epoch_num / iter_num)
     return step_num
+
+def grid_search(initial_gamma_list, final_gamma_list, gamma_decay_list, _lambda_list):
+    dimensions = len(initial_gamma_list) * len(final_gamma_list) * len(gamma_decay_list) * len(_lambda_list)
+    aa, bb, cc, dd = np.meshgrid(initial_gamma_list, final_gamma_list, gamma_decay_list, _lambda_list)
+    aa, bb, cc, dd = np.reshape(aa, (dimensions, -1)), np.reshape(bb, (dimensions, -1)), \
+                     np.reshape(cc, (dimensions, -1)), np.reshape(dd, (dimensions, -1))
+    parameter_matrix = np.concatenate((aa, bb, cc, dd), axis=1)
+    return parameter_matrix

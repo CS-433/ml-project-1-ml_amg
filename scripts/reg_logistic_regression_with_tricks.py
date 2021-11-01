@@ -11,7 +11,7 @@ def reg_logistic_regression_with_tricks(y, tx, lambda_, initial_w, batch_size, e
     step_num = find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num)
     for i in range(epoch_num):
         for batch_y, batch_X in batch_iter_improved(y, tx, batch_size, shuffle=True):
-            loss, grad = compute_improv_reg_logistic_loss_and_grad(batch_y, batch_X, w, lambda_)
+            loss, grad = compute_reg_logistic_loss_and_grad(batch_y, batch_X, w, lambda_)
             w = w - gamma * grad
             # store w and loss
             losses.append(loss)

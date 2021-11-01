@@ -59,27 +59,43 @@ def standardize(x, nonlinear_trasform = True):
     """Standardize the original data set."""
     mean_x = np.mean(x, axis=0)
     x = x - mean_x
+    std_x = np.std(x, axis=0)
     if nonlinear_trasform == True:
-        std_x = np.std(x, axis=0)
         x = np.sign(x) * (std_x * np.log(np.abs(x/std_x)+1))
     std_x_new = np.std(x, axis=0)
+    x = x / std_x_new
+    return x, mean_x, std_x, std_x_new
+
+def standardize_test(x, mean_x, std_x, std_x_new, nonlinear_trasform = True):
+    """Standardize the original data set."""
+    x = x - mean_x
+    if nonlinear_trasform == True:
+        x = np.sign(x) * (std_x * np.log(np.abs(x/std_x)+1))
     x = x / std_x_new
     return x
 
 
-def normalization(data, new_feature = None):
+def normalization_train(data):
     '''
         normalization function.
         data: initial data
         new_feature: polynomial feature
     '''
 
-    if new_feature is None:
-        data = np.concatenate((np.ones((data.shape[0],1)), standardize(data, nonlinear_trasform = True)), axis=1)
-    else:
-        data = np.concatenate((np.ones((data.shape[0], 1)), standardize(data, nonlinear_trasform = True), standardize(new_feature, nonlinear_trasform = True)), axis=1)
-    return data
+    data, mean_data, std_data, std_data_new = standardize(data, nonlinear_trasform=True)
+    data = np.concatenate((np.ones((data.shape[0], 1)), data), axis=1)
 
+    return data, mean_data, std_data, std_data_new
+
+def normalization_test(data, mean_train, std_train, std_train_new):
+    '''
+        normalization function.
+        data: initial data
+        new_feature: polynomial feature
+    '''
+    data = np.concatenate((np.ones((data.shape[0],1)),
+                           standardize_test(data, mean_train, std_train, std_train_new, nonlinear_trasform = True)), axis=1)
+    return data
 
 def data_split(ids, y, input, split_fraction=0.8):
 
@@ -116,3 +132,31 @@ def cross_validation_kfold(data, num_folds=5):
         train_id.append(train_fold)
 
     return test_id, train_id
+
+
+def pca_decomposition(data, num_components):
+    '''
+    Linear dimensionality reduction using Singular Value Decomposition of the data
+    to project it to a lower dimensional space
+    '''
+    data_meaned = data - np.mean(data)
+    # calculating the covariance matrix of the mean-centered data
+    covariance_m = np.cov(data_meaned, rowvar=False)
+
+    # calculating eigenvalues and eigenvectors of the covariance matrix
+    e_vals, e_vecs = np.linalg.eigh(covariance_m)
+
+    # sort the eigenvalues in descending order
+    sorted_id = np.argsort(e_vals)[::-1]
+    e_vals_sorted = e_vals[sorted_id]
+
+    # sort the eigenvectors
+    e_vecs_sorted = e_vecs[:, sorted_id]
+
+    # select the first num_components eigenvectors
+    selected_e_vecs = e_vecs_sorted[:, :num_components]
+
+    # transform the data
+    pca_components = np.dot(selected_e_vecs.transpose(), data_meaned.transpose()).transpose()
+
+    return pca_components
