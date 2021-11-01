@@ -1,13 +1,13 @@
 ## cs433ML-project 1
 
-In this repository, we provide the code for Project1 of the cs433 Machine Learning course.
+In this repository, we provide the code for Project1 of the cs433 Machine Learning course. You will find the code in `scripts/` folder.
+
+We achieved 84.1% accuracy on the test set in AIcrowd.
 
 ### Dataset
 The trainining dataset contains 250,000 data with signal/background labels, and the test dataset contains 568,238 data without labels. As input we have 30-dimensional space of features. Each vector of features represents the decay signature of a collision event, and our goal is to predict whether this event is signal (a Higgs boson) or background (something else).
 You can download the dataset from the [ML Higgs competetion](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs) from AIcrowd.
 
-### Code
-You will find the code in ./scripts folder.
 
 ### How to run the models
 `run.py`: you can run all the models in the report by using `python run.py`, it will print the mean accuracy on validation data and generate the CSV files of test data from each model.
@@ -15,25 +15,31 @@ You will find the code in ./scripts folder.
 ### The code structure
 #### `scripts/data_processing.py`
 It contains all the data pre-processing and post-processing methods:
-- load data: **load_data(data_path)**
-- clean data: **clean_data(data)**
+- load the data: **load_data(data_path)**
+- clean the data: **clean_data(data)**
 - feature engineering: **feature_cleaning(data)**
-- data standardize: **poly_feature_aug(data)**
-- data normalization: **standardize(x, nonlinear_trasform)**
-- k-fold cross validation: **normalization(data, new_feature)**
+- data augmentation (genetate quadratic polynomial feature): **poly_feature_aug(data)**
+- data standardization: 
+  - **standardize(x, nonlinear_trasform)**
+  - **standardize_test(x, mean_x, std_x, std_x_new, nonlinear_trasform = True)**
+- data normalization:
+  - **normalization_train(data)**
+  - **normalization_test(data, mean_train, std_train, std_train_new)**
+- PCA: **pca_decomposition(data, num_components)**
+- k-fold cross validation: **cross_validation_kfold(data, num_folds=5)**
 - create csv submission file: **create_csv_submission(ids, y_pred, name)**
 
 #### `scripts/helper.py`
 It contains all the tool functions we need in the project.
 - basic generate minibatch iterator (from exercise): **batch_iter(y, tx, batch_size, num_batches=1, shuffle=True)**
-- the improved function for generating minibatch iterator: **(y, tx, batch_size, shuffle=True)**
+- the improved function to generate minibatch iterator: **(y, tx, batch_size, shuffle=True)**
 - compute mse loss: **compute_loss(y, tx, w)**
 - comupte the gradient and the mse loss: **compute_gradient_and_loss(y, tx, w)**
 - compute the logistic loss and the gradient: **compute_logistic_loss_and_grad(y, X, w)**
 - compute the regularized logistic loss and the gradient: **compute_reg_logistic_loss_and_grad(y, X, w, lambda_)**
-- the improved function for computing the regularized logistic loss and the gradient: **compute_improv_reg_logistic_loss_and_grad(y, X, w, lambda_)**
 - sigmoid function: **sigmoid(x)**
-- function to find the step_size: **find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num)**
+- find the step size for learning rate decay: **find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num)**
+- grid search for hyperparameters: **grid_search(initial_gamma_list, final_gamma_list, gamma_decay_list, _lambda_list)**
 
 #### `scripts/implementations.py`
 It contains the 6 functions in project1 description

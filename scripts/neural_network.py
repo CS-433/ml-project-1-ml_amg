@@ -11,9 +11,11 @@ def sigmoid_derivative(x):
     return fx * (1 - fx)
 
 def relu(x):
+    # Relu function: f(x) = x (x>0), f(x)=0 (x<=0)
     return x * (x > 0)
 
 def relu_derivative(x):
+    # Derivative of Relu: f(x) = 1 (x>0), f(x)=0 (x<=0)
     return 1 * (x > 0)
 
 class NeuralNetwork:
@@ -32,10 +34,14 @@ class NeuralNetwork:
         self.weight = []
         self.bias = []
 
+        ### initial weight and bias for each layer
         for i in range(0, self.n_layers):
             self.weight.append(np.random.normal(size=(self.layer_size[i], self.layer_size[i+1])))
             self.bias.append(np.random.normal(size=(1, self.layer_size[i+1])))
 
+    ### propagate the input from the first layer to last layer
+    ##### ReLu as activation function for hidden layer
+    ##### Sigmoid as activation function for the last layer
     def forward(self, x):
         self.layers = []
         self.layers.append(x)
@@ -48,10 +54,11 @@ class NeuralNetwork:
             self.layers.append(output)
         return self.layers
 
-    # loss function
+    ### loss function: MSE
     def mse(self, y_true, y_pred):
         return np.mean(np.power(y_true - y_pred, 2))
 
+    ###  backpropagation: calculate the gradient and update the weights
     def back_propagation(self, y):
         self.grad_list = []
         d_output = (self.layers[-1] - y) * sigmoid_derivative(self.layers[-1])
@@ -64,13 +71,12 @@ class NeuralNetwork:
         for i in range(len(self.grad_list)):
             d_weight = np.dot(self.layers[i].T, self.grad_list[i])
             d_bias = self.grad_list[i]
-
             self.weight[i] -= d_weight * self.lr
             self.bias[i] -= d_bias * self.lr
-
         error = self.mse(self.layers[-1], y)
         return error
 
+    ### training function
     def train(self, x_train, y_train):
         losses = []
         for epoch in range(self.n_epochs):
@@ -86,6 +92,7 @@ class NeuralNetwork:
         losses.append(error)
         return losses
 
+    ### predict the output with the input
     def predict(self, input):
         output_list = self.forward(input)
         return output_list[-1]
