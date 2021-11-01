@@ -27,13 +27,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 def batch_iter_improved(y, tx, batch_size, shuffle=True):
     """
-    Generate a minibatch iterator for a dataset.
-    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
-    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
-    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
-    Example of use :
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
-        <DO-SOMETHING>
+    Generate a minibatch iterator for a dataset and interate through the whole epoch.
     """
     data_size = len(y)
 
@@ -66,17 +60,18 @@ def compute_gradient_and_loss(y, tx, w):
     return grad, loss
 
 def sigmoid(x):
+    """sigmoid function"""
     return 1/(1+np.exp(-x))
 
 def compute_logistic_loss_and_grad(y, X, w):
-    """Calculate the loss."""
+    """Calculate the logistics loss and the gredient."""
     h_x = sigmoid(X.dot(w))
     logi_loss = np.mean(-y * np.log(h_x) - (1-y) * np.log(1-h_x+1e-6))
     grad = (X.T.dot(h_x-y))/y.shape[0]
     return logi_loss, grad
 
 def compute_reg_logistic_loss_and_grad(y, X, w, lambda_):
-    """Calculate the loss."""
+    """Calculate the regularized logistics loss and the gredient."""
     h_x = sigmoid(X.dot(w))
     loss_term = np.mean(-y * np.log(h_x) - (1 - y) * np.log(1 - h_x + 1e-6))
     regu_term = np.sum(w ** 2) / (2 * y.shape[0])
@@ -85,6 +80,7 @@ def compute_reg_logistic_loss_and_grad(y, X, w, lambda_):
     return logi_loss, grad
 
 def find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num):
+    """find the step number to perform learning rate decay"""
     iter_num = 1
     gamma = initial_gamma
     while gamma > final_gamma:
@@ -94,6 +90,7 @@ def find_step_num(initial_gamma, final_gamma, gamma_decay, epoch_num):
     return step_num
 
 def grid_search(initial_gamma_list, final_gamma_list, gamma_decay_list, _lambda_list):
+    """generate grid search parameter matrix for learning rate and regularization weight"""
     dimensions = len(initial_gamma_list) * len(final_gamma_list) * len(gamma_decay_list) * len(_lambda_list)
     aa, bb, cc, dd = np.meshgrid(initial_gamma_list, final_gamma_list, gamma_decay_list, _lambda_list)
     aa, bb, cc, dd = np.reshape(aa, (dimensions, -1)), np.reshape(bb, (dimensions, -1)), \

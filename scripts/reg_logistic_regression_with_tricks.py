@@ -2,6 +2,7 @@ import numpy as np
 from helper import *
 
 def reg_logistic_regression_with_tricks(y, tx, lambda_, initial_w, batch_size, epoch_num, initial_gamma, final_gamma, gamma_decay):
+    """regularized logistics regression with epoch weight mean, mini-batch SGD and learning rate decay"""
     ws = [initial_w]
     gamma = initial_gamma
     losses = []

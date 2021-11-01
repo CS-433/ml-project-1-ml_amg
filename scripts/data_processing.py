@@ -76,11 +76,7 @@ def standardize_test(x, mean_x, std_x, std_x_new, nonlinear_trasform = True):
 
 
 def normalization_train(data):
-    '''
-        normalization function.
-        data: initial data
-        new_feature: polynomial feature
-    '''
+    '''normalization function for training.'''
 
     data, mean_data, std_data, std_data_new = standardize(data, nonlinear_trasform=True)
     data = np.concatenate((np.ones((data.shape[0], 1)), data), axis=1)
@@ -88,11 +84,7 @@ def normalization_train(data):
     return data, mean_data, std_data, std_data_new
 
 def normalization_test(data, mean_train, std_train, std_train_new):
-    '''
-        normalization function.
-        data: initial data
-        new_feature: polynomial feature
-    '''
+    '''normalization function for test.'''
     data = np.concatenate((np.ones((data.shape[0],1)),
                            standardize_test(data, mean_train, std_train, std_train_new, nonlinear_trasform = True)), axis=1)
     return data
